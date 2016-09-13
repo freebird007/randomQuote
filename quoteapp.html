@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta author="Mr.大洋芋">
+	<meta charset="UTF-8">
+	<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js">
+	</script>
+	<link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<style>
+	body{
+		height: 1080px;
+		background: url("http://www.bz55.com/uploads/allimg/150704/140-150F4112F3.jpg") no-repeat center center;
+		background-size: 100% 100%;
+	}
+	/* height设置为auto,使不同内容都可以在框里显示 */
+	.container{
+		max-width: 600px;
+		background-color: #fff;
+		height: auto;
+		margin-top: 200px;
+		border: 2px solid black;
+		border-radius: 10px;
+	}
+	/* 给quote文本设置外边框 */
+	.quote blockquote{
+		margin: 30px;
+	}
+	/* 设置名言语句的字体*/
+	.quote blockquote i{
+		font-size: 32px;
+
+	}
+	/* 设置名言语句的author的位置 */
+	.quote blockquote div{
+		float: right;
+		margin-top:64px; 
+	}
+	.button{
+		max-width: 600px;
+		height: 80px;
+		
+		
+	}
+	.btn-left{
+		float: left;
+		margin-top:25px;
+		margin-left: 50px;
+	}
+	.btn-right{
+		float: right;
+		margin-right: 50px;
+		margin-top: 25px;
+	}
+	
+	</style>
+</head>
+<body>
+	
+	<div class="container">
+		<div class="row">
+			<div class="quote-title text-center">
+					<h1><strong>会心一语</strong></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="quote">
+				<blockquote>
+					<i class="quote-text">
+					hello world!
+					</i>
+					<div>
+					<footer  class='quote-author'>Mr.大洋芋</footer>
+					</div>
+				</blockquote>
+				
+			</div>
+			
+		</div>
+		<div class="button">
+				<a class='btn btn-primary btn-lg btn-left' id="tweet-quote" title="Tweet this quote!" target="_blank">
+					share it!
+				</a>
+				<a class='btn btn-primary btn-lg btn-right' id="tweet-quote" title="Tweet this quote!" target="_blank">
+					new quote
+				</a>
+		</div>
+		
+	</div>
+	<script>
+
+	$(document).ready(function(){
+		var colors=["#8A2BE2","#7FFF00","#6495ED","#AB253C","#00008B","#FF00FF","#008000","#ADFF2F","#FF69B4","#90EE90","#00FF7F","#05FF00","#9ACS32","#F5DEB3"];
+		var curquote='',curauthor='';
+		function getQuote(){
+			//执行AJAX请求,获取响应的数据
+			$.ajax({
+				 headers: {
+					      "X-Mashape-Key": "OivH71yd3tmshl9YKzFH7BTzBVRQp1RaKLajsnafgL2aPsfP9V",
+					     Accept: "application/json",
+					      "Content-Type": "application/x-www-form-urlencoded"
+			    },
+			    url: 'https://andruxnet-random-famous-quotes.p.mashape.com/cat=',
+			    //成功获取数据之后,对返回的JSON数据,进行转换
+			    success:function(response){
+			    	var respon=JSON.parse(response);
+			    	curquote=respon.quote;
+			    	curauthor=respon.author;
+			    }
+			    
+			})
+			if(curquote==""){
+				curquote="没有显示出来?再点击一次试试吧.";
+			}
+
+		}
+		//点击new-quote按钮,响应事件
+		$(".btn-right").click(function(){
+			//随机获取一个数值i,用来当做colors数组的索引
+			var i=Math.floor(Math.random()*colors.length);
+			getQuote();
+			//$(".quote-text,.quote-author").animate({"color":colors[i]},500);
+			//针对quote-text元素,执行animate()动画.
+			$(".quote-text").animate(
+				{opacity:0},500,function(){
+					$(this).animate({opacity:1},500);	
+					$(".quote-text").text(curquote).css("color",colors[i]);
+			});
+			$(".quote-author").animate(
+				{opacity:0},500,function(){
+					$(this).animate({opacity:1},500);	
+					$(".quote-author").text(curauthor);
+			});
+			
+			//$(".quote-text,.quote-author").css("color",colors[i]);
+			//$(".quote-text").text(curquote);
+			//$(".quote-author").text(curauthor);
+			//alert("作者是:"+text);
+		})
+		//按下ENTER键时,响应点击new-qoute按钮的事件
+		$(window).keypress(function(event){
+			if(event.keyCode=="13"){
+				$(".btn-right").trigger("click");
+			}
+		})
+	})
+	</script>
+	
+	
+	
+</body>
+</html>
