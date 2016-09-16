@@ -17,11 +17,11 @@
 		background: url("http://www.bz55.com/uploads/allimg/150704/140-150F4112F3.jpg") no-repeat center center;
 		background-size: 100% 100%;
 	}
-	/* height设置为auto,使不同内容都可以在框里显示 */
+	
 	.container{
 		max-width: 600px;
 		background-color: #fff;
-		height: auto;
+		
 		margin-top: 200px;
 		border: 2px solid black;
 		border-radius: 10px;
@@ -31,7 +31,7 @@
 		margin: 30px;
 	}
 	/* 设置名言语句的字体*/
-	.quote blockquote i{
+	.quote blockquote p{
 		font-size: 32px;
 
 	}
@@ -65,16 +65,17 @@
 		<div class="row">
 			<div class="quote-title text-center">
 					<h1><strong>会心一语</strong></h1>
+					
 			</div>
 		</div>
 		<div class="row">
 			<div class="quote">
 				<blockquote>
-					<i class="quote-text">
+					<p class="quote-text BSHARE_TEXT">
 					hello world!
-					</i>
+					</p>
 					<div>
-					<footer  class='quote-author'>Mr.大洋芋</footer>
+					<footer class='quote-author'>Mr.大洋芋</footer>
 					</div>
 				</blockquote>
 				
@@ -82,17 +83,30 @@
 			
 		</div>
 		<div class="button">
-				<a class='btn btn-primary btn-lg btn-left' id="tweet-quote" title="Tweet this quote!" target="_blank">
-					share it!
-				</a>
+					<a class='btn btn-primary btn-lg btn-left' title="分享到新浪微博" onclick="javascript:bShare.share(event,'sinaminiblog',0);return false;" style="cursor:pointer;color:#2e3192;">
+					<img src="http://static.bshare.cn/frame/images/logos/s4/sinaminiblog.gif" style="height:16px; width:16px; vertical-align:middle;"/>
+					<span style="padding-left:2px; vertical-align:middle;">新浪微博</span></a>
+
 				<a class='btn btn-primary btn-lg btn-right' id="tweet-quote" title="Tweet this quote!" target="_blank">
 					new quote
 				</a>
 		</div>
-		
+		<!-- <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div> -->
+		<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=<你的UUID>&style=-1"></script>
+<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC1.js"></script>
+		<script>
+		bShare.addEntry({
+			title:"分享的",
+			url:'http://codepen.io/freebird007/pen/EgyNAL',	
+			//summary:'1112233',
+		});
+		//bShare.share(event, shortName[, entryNum]);
+		</script>
 	</div>
+	
 	<script>
 
+	var quote;
 	$(document).ready(function(){
 		var colors=["#8A2BE2","#7FFF00","#6495ED","#AB253C","#00008B","#FF00FF","#008000","#ADFF2F","#FF69B4","#90EE90","#00FF7F","#05FF00","#9ACS32","#F5DEB3"];
 		var curquote='',curauthor='';
@@ -110,22 +124,41 @@
 			    	var respon=JSON.parse(response);
 			    	curquote=respon.quote;
 			    	curauthor=respon.author;
+			    	//alert(curquote+'   '+curauthor);
+			    	if(curquote==""){
+						curquote="没有显示出来?再点击一次试试吧.";
+					}
+					//每次调用getQuote函数，随机获取一个颜色；
+					var i=Math.floor(Math.random()*colors.length);
+					var color=colors[i];
+					//把获取到的quote和author显示出来
+			    	$(".quote-text").animate(
+						{opacity:0},500,function(){
+							$(this).animate({opacity:1},500);	
+							$(".quote-text").text(curquote).css("color",color);
+							$("#quote-text").text(curquote)
+					});
+					$(".quote-author").animate(
+						{opacity:0},500,function(){
+							$(this).animate({opacity:1},500);	
+							$(".quote-author").text(curauthor);
+					});
+					/*$(".btn-left").mouseenter(function(){
+						$(".btn-left").attr("href","https://api.weibo.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&response_type=code&redirect_uri=YOUR_REGISTERED_REDIRECT_URI/?code=CODE");
+					});*/
 			    }
+
 			    
 			})
-			if(curquote==""){
-				curquote="没有显示出来?再点击一次试试吧.";
-			}
-
+			
+			
 		}
 		//点击new-quote按钮,响应事件
 		$(".btn-right").click(function(){
-			//随机获取一个数值i,用来当做colors数组的索引
-			var i=Math.floor(Math.random()*colors.length);
 			getQuote();
 			//$(".quote-text,.quote-author").animate({"color":colors[i]},500);
 			//针对quote-text元素,执行animate()动画.
-			$(".quote-text").animate(
+			/*$(".quote-text").animate(
 				{opacity:0},500,function(){
 					$(this).animate({opacity:1},500);	
 					$(".quote-text").text(curquote).css("color",colors[i]);
@@ -134,19 +167,18 @@
 				{opacity:0},500,function(){
 					$(this).animate({opacity:1},500);	
 					$(".quote-author").text(curauthor);
-			});
-			
-			//$(".quote-text,.quote-author").css("color",colors[i]);
-			//$(".quote-text").text(curquote);
-			//$(".quote-author").text(curauthor);
-			//alert("作者是:"+text);
-		})
+			});*/
+
+		});
 		//按下ENTER键时,响应点击new-qoute按钮的事件
 		$(window).keypress(function(event){
 			if(event.keyCode=="13"){
 				$(".btn-right").trigger("click");
 			}
-		})
+		});
+		//var quote=getElement
+		
+		
 	})
 	</script>
 	
